@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Standard -->
+    <color name="white">#fff</color>
+    <color name="off_white">#f8f8f8</color>
+    <color name="more_off_white">#d8d8d8</color>
+    <color name="black">#000</color>
+    <color name="off_black">#040404</color>
+    <color name="more_off_black">#080808</color>
+
+</resources>
