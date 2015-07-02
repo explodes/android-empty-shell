@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell;
+package io.explod.android.emptyshell.meta;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,9 +1,13 @@
-package io.explod.android.emptyshell;
+package io.explod.android.emptyshell.meta;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 
 import dagger.ObjectGraph;
+import io.explod.android.emptyshell.App;
+
+import static io.explod.android.emptyshell.meta.TestUtil.clearSharedPreferences;
+import static io.explod.android.emptyshell.meta.TestUtil.enableMockMode;
 
 
 public class AppInstrumentationTest<T extends Activity> extends ActivityInstrumentationTestCase2<T> {
@@ -14,8 +18,8 @@ public class AppInstrumentationTest<T extends Activity> extends ActivityInstrume
 
     protected void setUp() throws Exception {
         super.setUp();
-        TestUtil.clearSharedPreferences(getInstrumentation().getTargetContext());
-        TestUtil.enableMockMode(getInstrumentation().getTargetContext());
+        clearSharedPreferences(getInstrumentation().getTargetContext());
+        enableMockMode(getInstrumentation().getTargetContext());
         getObjectGraph().inject(this);
     }
 
