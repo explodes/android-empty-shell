@@ -3,7 +3,7 @@ Android Project Starter Pack "Empty-Shell"
 
  ![Empty Shell][shell]
 
-*This project features all of the core of the business logic that I use in my applications.*
+*This project features all of the core framework-configuration that I use in my applications.*
 
 Some of the features included are:
 
