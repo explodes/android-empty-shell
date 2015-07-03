@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.module.annotations.ForApplication;
 
 @Module
@@ -36,12 +37,16 @@ public class AppModule {
     @Provides
     @Singleton
     Picasso providesPicasso(@ForApplication Context context) {
-        return new Picasso.Builder(context).listener(new Picasso.Listener() {
+        Picasso picasso = new Picasso.Builder(context).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                 Log.d(PICASSO_LOG_TAG, (exception == null ? "Unknown Error" : exception.getMessage()) + ": " + (uri == null ? "no-uri-specified" : uri.toString()));
             }
         }).build();
+        if (BuildConfig.DEBUG) {
+            picasso.setIndicatorsEnabled(true);
+        }
+        return picasso;
     }
 
     @Provides
