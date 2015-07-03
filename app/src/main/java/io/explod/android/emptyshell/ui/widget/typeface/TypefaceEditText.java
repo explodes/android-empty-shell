@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.util.typeface.TypefaceManager;
 
-import static io.explod.android.emptyshell.util.DependencyInjectionUtils.injectDependencies;
+import static io.explod.android.emptyshell.App.getApp;
 
 
 /**
@@ -33,7 +33,7 @@ public class TypefaceEditText extends EditText {
 
         // Edit mode does not support custom fonts
         if (!isInEditMode()) {
-            injectDependencies(this);
+            getApp(context).getObjectGraph().inject(this);
             int[] attrsArray = new int[]{android.R.attr.textStyle};
             TypedArray androidAttrs = context.obtainStyledAttributes(attrs, attrsArray, android.R.attr.editTextStyle, 0);
             int textStyle = androidAttrs.getInt(0, Typeface.NORMAL);

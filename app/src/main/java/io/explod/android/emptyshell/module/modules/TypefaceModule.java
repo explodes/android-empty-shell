@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.module.components;
+package io.explod.android.emptyshell.module.modules;
 
 import javax.inject.Singleton;
 
@@ -6,10 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.explod.android.emptyshell.util.typeface.TypefaceManager;
 
-@Module(
-        library = true,
-        complete = true
-)
+@Module
 public class TypefaceModule {
 
     @Provides

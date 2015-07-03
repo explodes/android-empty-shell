@@ -1,37 +1,19 @@
-package io.explod.android.emptyshell.module;
+package io.explod.android.emptyshell.module.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
-import io.explod.android.emptyshell.App;
-import io.explod.android.emptyshell.module.annotations.ForApplication;
-import io.explod.android.emptyshell.module.components.NetworkModule;
-import io.explod.android.emptyshell.module.components.PreferenceModule;
-import io.explod.android.emptyshell.module.components.TypefaceModule;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.explod.android.emptyshell.module.annotations.ForApplication;
 
-@Module(
-        complete = true,
-        library = true,
-        includes = {
-                // List Components Here
-                PreferenceModule.class,
-                NetworkModule.class,
-                TypefaceModule.class
-        },
-        injects = {
-                // List injected classes here
-                // ## App
-                App.class,
-        }
-)
+@Module
 public class AppModule {
 
     public static final String SHARED_PREFS_NAME = "prefs";
@@ -67,5 +49,4 @@ public class AppModule {
     SharedPreferences providesSharedPreferences(@ForApplication Context context) {
         return context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
     }
-
 }

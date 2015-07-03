@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import io.explod.android.emptyshell.util.typeface.CustomTypeface;
 import io.explod.android.emptyshell.util.typeface.TypefaceManager;
 
-import static io.explod.android.emptyshell.util.DependencyInjectionUtils.injectDependencies;
+import static io.explod.android.emptyshell.App.getApp;
 
 
 public class CustomTypefaceSpan extends TypefaceSpan {
@@ -29,7 +29,7 @@ public class CustomTypefaceSpan extends TypefaceSpan {
 
     public CustomTypefaceSpan(Context context, String family, CustomTypeface typeface) {
         super(family);
-        injectDependencies(context, this);
+        getApp(context).getObjectGraph().inject(this);
         mTypeface = mTypefaceManager.get(context, typeface);
     }
 

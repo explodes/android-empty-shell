@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.module.components;
+package io.explod.android.emptyshell.module.modules;
 
 import android.content.Context;
 import android.os.Build;
@@ -32,7 +32,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.explod.android.emptyshell.App;
 import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.Constants;
 import io.explod.android.emptyshell.module.annotations.ForApplication;
@@ -48,10 +47,9 @@ import retrofit.client.OkClient;
 import retrofit.converter.Converter;
 import retrofit.converter.GsonConverter;
 
-@Module(
-        library = true,
-        complete = false
-)
+import static io.explod.android.emptyshell.App.getApp;
+
+@Module
 public class NetworkModule {
 
     public static final String LOWER_CASE_WITH_UNDERSCORES = "LOWER_CASE_WITH_UNDERSCORES";
@@ -179,7 +177,7 @@ public class NetworkModule {
     Cache providesHttpResponseCache(@ForApplication Context context) {
         // Create an HTTP cache in the application cache directory.
         Cache cache = null;
-        File cacheDir = new File(App.get(context).getCacheDir(), HTTP_DISK_CACHE_DIR);
+        File cacheDir = new File(getApp(context).getCacheDir(), HTTP_DISK_CACHE_DIR);
         try {
             cache = new Cache(cacheDir, HTTP_DISK_CACHE_SIZE);
         } catch (IOException e) {

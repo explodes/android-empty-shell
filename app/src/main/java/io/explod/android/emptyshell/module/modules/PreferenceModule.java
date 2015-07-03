@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.module.components;
+package io.explod.android.emptyshell.module.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,15 +8,11 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.explod.android.emptyshell.Constants;
-import io.explod.android.emptyshell.module.AppModule;
 import io.explod.android.emptyshell.module.annotations.NamedPreference;
 import io.explod.android.emptyshell.network.ApiEndpoint;
 import io.explod.android.emptyshell.util.prefs.EnumPreference;
 
-@Module(
-        library = true,
-        complete = false
-)
+@Module
 public class PreferenceModule {
 
     public static final String PREF_API_ENDPOINT = "api_endpoint";

@@ -7,9 +7,9 @@ Android Project Starter Pack "Empty-Shell"
 
 Some of the features included are:
 
- - Dependency Injection with [Dagger (< 2)](http://square.github.io/dagger/)
+ - Dependency Injection with [Dagger 2](http://google.github.io/dagger/)
  - Reactive Extension via [RxJava](https://github.com/ReactiveX/RxJava) / [RxAndroid](https://github.com/ReactiveX/RxAndroid)
- - View injections from [Butterknife (7+)](http://jakewharton.github.io/butterknife/)
+ - View injections from [Butterknife](http://jakewharton.github.io/butterknife/)
  - API Clients by [Retrofit](http://square.github.io/retrofit/)
  - Simple state saving/restoring with [Icepick](https://github.com/frankiesardo/icepick)
 

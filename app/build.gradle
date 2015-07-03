@@ -1,13 +1,16 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.19.2'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'io.fabric'
 
 repositories {
@@ -21,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId "io.explod.android.emptyshell"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 0
         versionName "0.0.0"
@@ -54,8 +57,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "com.squareup.dagger:dagger:1.2.2"
-    provided "com.squareup.dagger:dagger-compiler:1.2.2"
+    apt 'com.google.dagger:dagger-compiler:2.0.1'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    compile 'com.google.dagger:dagger:2.0.1'
 
     compile "com.jakewharton:butterknife:7.0.1"
 
@@ -68,10 +72,10 @@ dependencies {
 
     compile "com.android.support:support-v4:22.2.0"
     compile "com.android.support:appcompat-v7:22.2.0"
-    compile "com.android.support:recyclerview-v7:22.0.0"
+    compile "com.android.support:recyclerview-v7:22.2.0"
 
-    compile 'io.reactivex:rxjava:1.0.8'
-    compile 'io.reactivex:rxandroid:0.24.0'
+    compile "io.reactivex:rxjava:1.0.8"
+    compile "io.reactivex:rxandroid:0.24.0"
 
 //    compile "frankiesardo:icepick:3.0.2"
 //    provided "frankiesardo:icepick-processor:3.0.2"
@@ -79,9 +83,9 @@ dependencies {
     compile "net.danlew:android.joda:2.7.1"
     compile "org.ocpsoft.prettytime:prettytime:3.2.7.Final"
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
+    compile("com.crashlytics.sdk.android:crashlytics:2.4.0@aar") {
         transitive = true;
     }
 
-    testCompile 'junit:junit:4.12'
+    testCompile "junit:junit:4.12"
 }

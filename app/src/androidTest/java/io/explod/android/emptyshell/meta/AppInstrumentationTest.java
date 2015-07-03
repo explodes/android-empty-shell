@@ -1,13 +1,13 @@
 package io.explod.android.emptyshell.meta;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
 
-import dagger.ObjectGraph;
-import io.explod.android.emptyshell.App;
-
-import static io.explod.android.emptyshell.meta.TestUtil.clearSharedPreferences;
-import static io.explod.android.emptyshell.meta.TestUtil.enableMockMode;
+import io.explod.android.emptyshell.module.modules.AppModule;
+import io.explod.android.emptyshell.module.modules.PreferenceModule;
+import io.explod.android.emptyshell.network.ApiEndpoint;
 
 
 public class AppInstrumentationTest<T extends Activity> extends ActivityInstrumentationTestCase2<T> {
@@ -20,15 +20,17 @@ public class AppInstrumentationTest<T extends Activity> extends ActivityInstrume
         super.setUp();
         clearSharedPreferences(getInstrumentation().getTargetContext());
         enableMockMode(getInstrumentation().getTargetContext());
-        getObjectGraph().inject(this);
     }
 
-    /**
-     * Get the ObjectGraph used for testing. Generally all  you'll need to do is add your Test Class to TestModule's {@code injects}
-     * parameter.
-     */
-    protected ObjectGraph getObjectGraph() {
-        return App.get(getInstrumentation().getTargetContext()).getObjectGraph().plus(new TestModule());
+    public static void clearSharedPreferences(Context context) {
+        PreferenceModule.clear(context);
+    }
+
+    public static void enableMockMode(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(AppModule.SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(PreferenceModule.PREF_API_ENDPOINT, ApiEndpoint.MOCK_MODE.name());
+        editor.commit();
     }
 
 }

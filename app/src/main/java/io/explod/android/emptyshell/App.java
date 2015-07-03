@@ -7,22 +7,22 @@ import com.crashlytics.android.Crashlytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import dagger.ObjectGraph;
-import io.explod.android.emptyshell.module.AppModule;
+import io.explod.android.emptyshell.module.DaggerObjectGraph;
+import io.explod.android.emptyshell.module.ObjectGraph;
+import io.explod.android.emptyshell.module.modules.AppModule;
 import io.fabric.sdk.android.Fabric;
 
 public class App extends Application {
 
-    private ObjectGraph mObjectGraph;
+    private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
+        .appModule(new AppModule(this))
+        .build();
 
-    public static App get(Context context) {
+    public static App getApp(Context context) {
         return ((App) context.getApplicationContext());
     }
 
     public ObjectGraph getObjectGraph() {
-        if (mObjectGraph == null) {
-            mObjectGraph = ObjectGraph.create().plus(new AppModule(this));
-        }
         return mObjectGraph;
     }
 
