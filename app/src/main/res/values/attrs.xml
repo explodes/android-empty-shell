@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Changing the attribute must be reflected in the util.TypefaceManager -->
+    <attr name="typeface" format="enum">
+        <enum name="Foo" value="0" />
+    </attr>
+
+    <declare-styleable name="TypefaceTextView">
+        <!-- Font Typeface -->
+        <attr name="typeface" />
+    </declare-styleable>
+
+    <declare-styleable name="TypefaceButton">
+        <!-- Font Typeface -->
+        <attr name="typeface" />
+    </declare-styleable>
+
+    <declare-styleable name="TypefaceEditText">
+        <!-- Font Typeface -->
+        <attr name="typeface" />
+    </declare-styleable>
+
+</resources>
