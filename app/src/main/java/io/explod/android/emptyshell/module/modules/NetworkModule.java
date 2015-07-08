@@ -59,8 +59,8 @@ public class NetworkModule {
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"; // 2015-03-04T14:15:23.039-07:00
 
 	private static final String[] DATE_FORMATS = new String[]{
-			"yyyy-MM-dd'T'HH:mm:ss.SSSZ", // 2015-03-04T14:15:23.039-07:00
-			"yyyy-MM-dd" // 2014-03-31
+		"yyyy-MM-dd'T'HH:mm:ss.SSSZ", // 2015-03-04T14:15:23.039-07:00
+		"yyyy-MM-dd" // 2014-03-31
 	};
 
 	private static final int HTTP_DISK_CACHE_SIZE = 1024 * 1024 * 50; // 50MB
@@ -75,8 +75,7 @@ public class NetworkModule {
 	AppService provideAppService(OkClient okClient,
 								 @Named(LOWER_CASE_WITH_UNDERSCORES) Gson gson,
 //                                 final @NamedPreference(PreferenceModule.PREF_TOKEN) ObjectPreference<Token.Response> tokenPref,
-								 @NamedPreference(PreferenceModule.PREF_API_ENDPOINT) EnumPreference<ApiEndpoint> apiEndpointPref
-	) {
+								 @NamedPreference(PreferenceModule.PREF_API_ENDPOINT) EnumPreference<ApiEndpoint> apiEndpointPref) {
 		ApiEndpoint endpoint = apiEndpointPref.get();
 		AppService service = mServices.get(endpoint);
 
@@ -84,27 +83,18 @@ public class NetworkModule {
 			if (endpoint == ApiEndpoint.MOCK_MODE) {
 				service = new MockAppService();
 			} else {
-				Converter converter = new GsonConverter(gson);
 				final String userAgent = createUserAgent();
-				RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint(endpoint.serviceHost)
-						.setClient(okClient)
-						.setConverter(converter)
-						.setLogLevel(RestAdapter.LogLevel.BASIC)
-						.setRequestInterceptor(new RequestInterceptor() {
-							@Override
-							public void intercept(RequestFacade request) {
-								request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
-								request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
-							}
-						});
-				if (BuildConfig.DEBUG) {
-					builder.setLogLevel(RestAdapter.LogLevel.FULL);
-				}
-				RestAdapter adapter = builder.build();
-				service = adapter.create(AppService.class);
+				RequestInterceptor interceptor = new RequestInterceptor() {
+					@Override
+					public void intercept(RequestFacade request) {
+						request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
+						request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
+					}
+				};
+				service = createService(okClient, gson, interceptor, endpoint.serviceHost, AppService.class);
 			}
 			mServices.put(endpoint, service);
 		}
@@ -124,15 +114,10 @@ public class NetworkModule {
 			if (endpoint == ApiEndpoint.MOCK_MODE) {
 				service = new MockAppService();
 			} else {
-				Converter converter = new GsonConverter(gson);
 				final String userAgent = createUserAgent();
-				RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint(endpoint.serviceHost)
-						.setClient(okClient)
-						.setConverter(converter)
-						.setLogLevel(RestAdapter.LogLevel.BASIC)
-						.setRequestInterceptor(new RequestInterceptor() {
-							@Override
-							public void intercept(RequestFacade request) {
+				RequestInterceptor interceptor = new RequestInterceptor() {
+					@Override
+					public void intercept(RequestFacade request) {
 //                                Token.Response token = tokenPref.getObject();
 //                                if (!Token.Response.isValid(token)) {
 //                                    doLogout(context);
@@ -141,22 +126,37 @@ public class NetworkModule {
 //                                    String authorization = Constants.HTTP_HEADER_AUTHORIZATION_BEARER + " " + token.accessToken;
 //                                    request.addHeader(Constants.HTTP_HEADER_AUTHORIZATION, authorization);
 //                                }
-								request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
-								request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
-								request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
-							}
-						});
-				if (BuildConfig.DEBUG) {
-					builder.setLogLevel(RestAdapter.LogLevel.FULL);
-				}
-				RestAdapter adapter = builder.build();
-				service = adapter.create(AppAuthorizedService.class);
+						request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
+						request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
+						request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
+					}
+				};
+				service = createService(okClient, gson, interceptor, endpoint.serviceHost, AppAuthorizedService.class);
 			}
 			mAuthorizedServices.put(endpoint, service);
 		}
 		return service;
+	}
+
+	private static <T> T createService(OkClient okClient,
+									   @Named(LOWER_CASE_WITH_UNDERSCORES) Gson gson,
+									   RequestInterceptor interceptor,
+									   String host,
+									   Class<? extends T> serviceClass) {
+		Converter converter = new GsonConverter(gson);
+		RestAdapter.Builder builder = new RestAdapter.Builder()
+			.setEndpoint(host)
+			.setClient(okClient)
+			.setConverter(converter)
+			.setLogLevel(RestAdapter.LogLevel.BASIC)
+			.setRequestInterceptor(interceptor);
+		if (BuildConfig.DEBUG) {
+			builder.setLogLevel(RestAdapter.LogLevel.FULL);
+		}
+		RestAdapter adapter = builder.build();
+		return adapter.create(serviceClass);
 	}
 
 	@Provides
@@ -195,9 +195,9 @@ public class NetworkModule {
 
 	private Gson build(FieldNamingPolicy fieldNamingPolicy) {
 		return new GsonBuilder()
-				.registerTypeAdapter(Date.class, new DateFormatter())
-				.setFieldNamingPolicy(fieldNamingPolicy)
-				.create();
+			.registerTypeAdapter(Date.class, new DateFormatter())
+			.setFieldNamingPolicy(fieldNamingPolicy)
+			.create();
 	}
 
 	private String createUserAgent() {
