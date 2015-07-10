@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -58,9 +57,10 @@ public class NetworkModule {
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"; // 2015-03-04T14:15:23.039-07:00
 
-	private static final String[] DATE_FORMATS = new String[]{
-		"yyyy-MM-dd'T'HH:mm:ss.SSSZ", // 2015-03-04T14:15:23.039-07:00
-		"yyyy-MM-dd" // 2014-03-31
+	private static final SimpleDateFormat[] DATE_FORMATS = new SimpleDateFormat[]{
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.Z", Locale.US),    // 2015-03-04T14:15:23-07:00
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US), // 2015-03-04T14:15:23.039-07:00
+		new SimpleDateFormat("yyyy-MM-dd", Locale.US)                  // 2014-03-31
 	};
 
 	private static final int HTTP_DISK_CACHE_SIZE = 1024 * 1024 * 50; // 50MB
@@ -208,15 +208,18 @@ public class NetworkModule {
 	private static class DateFormatter implements JsonDeserializer<Date>, JsonSerializer<Date> {
 
 		@Override
-		public Date deserialize(JsonElement jsonElement, Type typeOF,
-								JsonDeserializationContext context) throws JsonParseException {
-			for (String format : DATE_FORMATS) {
+		public Date deserialize(JsonElement jsonElement, Type typeOfDest, JsonDeserializationContext context) throws JsonParseException {
+			for (SimpleDateFormat format : DATE_FORMATS) {
+				Date parsed;
 				try {
-					return new SimpleDateFormat(format, Locale.US).parse(jsonElement.getAsString());
+					parsed = format.parse(jsonElement.getAsString());
 				} catch (ParseException e) {
+					// keep moving forward
+					continue;
 				}
+				return parsed;
 			}
-			throw new JsonParseException("Unparseable date: \"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
+			throw new JsonParseException("Could not parse date: \"" + jsonElement.getAsString() + "\".");
 		}
 
 		@Override
