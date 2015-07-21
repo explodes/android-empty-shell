@@ -17,7 +17,6 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -97,5 +96,9 @@ dependencies {
         transitive = true;
     }
 
-    testCompile "junit:junit:4.12"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+
+    testCompile 'org.powermock:powermock-api-mockito:1.6.1'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.1'
 }
