@@ -84,15 +84,12 @@ public class NetworkModule {
 				service = new MockAppService();
 			} else {
 				final String userAgent = createUserAgent();
-				RequestInterceptor interceptor = new RequestInterceptor() {
-					@Override
-					public void intercept(RequestFacade request) {
-						request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
-						request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
-					}
+				RequestInterceptor interceptor = request -> {
+					request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
+					request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
 				};
 				service = createService(okClient, gson, interceptor, endpoint.serviceHost, AppService.class);
 			}
@@ -115,23 +112,20 @@ public class NetworkModule {
 				service = new MockAppService();
 			} else {
 				final String userAgent = createUserAgent();
-				RequestInterceptor interceptor = new RequestInterceptor() {
-					@Override
-					public void intercept(RequestFacade request) {
-//                                Token.Response token = tokenPref.getObject();
-//                                if (!Token.Response.isValid(token)) {
-//                                    doLogout(context);
-//                                    return;
-//                                } else {
-//                                    String authorization = Constants.HTTP_HEADER_AUTHORIZATION_BEARER + " " + token.accessToken;
-//                                    request.addHeader(Constants.HTTP_HEADER_AUTHORIZATION, authorization);
-//                                }
-						request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
-						request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
-						request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
-					}
+				RequestInterceptor interceptor = request -> {
+//					Token.Response token = tokenPref.getObject();
+//					if (!Token.Response.isValid(token)) {
+//						doLogout(context);
+//						return;
+//					} else {
+//						String authorization = Constants.HTTP_HEADER_AUTHORIZATION_BEARER + " " + token.accessToken;
+//						request.addHeader(Constants.HTTP_HEADER_AUTHORIZATION, authorization);
+//					}
+					request.addHeader(Constants.HTTP_HEADER_USER_AGENT, userAgent);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON);
+					request.addHeader(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP);
+					request.addHeader(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8);
 				};
 				service = createService(okClient, gson, interceptor, endpoint.serviceHost, AppAuthorizedService.class);
 			}
