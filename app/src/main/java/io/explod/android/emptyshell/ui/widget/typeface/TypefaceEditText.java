@@ -33,7 +33,7 @@ public class TypefaceEditText extends TextView {
 
 	private void loadAttrs(Context context, AttributeSet attrs) {
 		if (!isInEditMode()) {
-			getApp(context).getObjectGraph().inject(this);
+			getApp().getObjectGraph().inject(this);
 			Typeface typeface = mTypefaceManager.getTypeface(context, attrs, R.styleable.TypefaceButton, R.styleable.TypefaceButton_typeface);
 			if (typeface != null) {
 				setTypeface(typeface);

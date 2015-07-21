@@ -174,10 +174,10 @@ public class NetworkModule {
 
 	@Provides
 	@Singleton
-	Cache providesHttpResponseCache(@ForApplication Context context) {
+	Cache providesHttpResponseCache() {
 		// Create an HTTP cache in the application cache directory.
 		Cache cache = null;
-		File cacheDir = new File(getApp(context).getCacheDir(), HTTP_DISK_CACHE_DIR);
+		File cacheDir = new File(getApp().getCacheDir(), HTTP_DISK_CACHE_DIR);
 		try {
 			cache = new Cache(cacheDir, HTTP_DISK_CACHE_SIZE);
 		} catch (IOException e) {

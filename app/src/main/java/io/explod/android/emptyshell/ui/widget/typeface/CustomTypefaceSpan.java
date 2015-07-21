@@ -29,7 +29,7 @@ public class CustomTypefaceSpan extends TypefaceSpan {
 
 	public CustomTypefaceSpan(Context context, String family, TypefaceDescription typeface) {
 		super(family);
-		getApp(context).getObjectGraph().inject(this);
+		getApp().getObjectGraph().inject(this);
 		mTypeface = mTypefaceManager.getTypeface(context, typeface);
 	}
 

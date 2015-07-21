@@ -1,7 +1,6 @@
 package io.explod.android.emptyshell;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -14,12 +13,14 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application {
 
-	private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
-			.appModule(new AppModule(this))
-			.build();
+	private static App sInstance;
 
-	public static App getApp(Context context) {
-		return ((App) context.getApplicationContext());
+	private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
+		.appModule(new AppModule(this))
+		.build();
+
+	public static App getApp() {
+		return sInstance;
 	}
 
 	public ObjectGraph getObjectGraph() {
@@ -29,6 +30,9 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		sInstance = this;
+
 		if (!BuildConfig.DEBUG) {
 			// Production Stuff
 			onCreateInProductionMode();
