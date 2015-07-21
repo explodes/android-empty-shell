@@ -42,7 +42,7 @@ public abstract class BasePreference<T> {
 	/**
 	 * Name of the preference
 	 */
-	private String mPrefenceName;
+	private String mPreferenceName;
 	/**
 	 * Default setting value
 	 */
@@ -62,7 +62,7 @@ public abstract class BasePreference<T> {
 	 */
 	public BasePreference(SharedPreferences preferences, String preferenceName, T defaultValue) {
 		mPreferences = preferences;
-		mPrefenceName = preferenceName;
+		mPreferenceName = preferenceName;
 		mDefaultValue = defaultValue;
 	}
 
@@ -70,7 +70,7 @@ public abstract class BasePreference<T> {
 	 * @return Returns the name of this setting
 	 */
 	public String getPreferenceName() {
-		return mPrefenceName;
+		return mPreferenceName;
 	}
 
 	/**

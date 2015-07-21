@@ -87,7 +87,7 @@ public class RxDelegateTest extends TestCase {
 		subscription.unsubscribe();
 
 		// subscription
-		subscription = delegate.getObservable().subscribe(sink);
+		delegate.getObservable().subscribe(sink);
 
 		// 1 errors, 1 next event
 		assertEquals(0, nextCount.get()); // no next, only error
