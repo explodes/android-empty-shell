@@ -28,6 +28,8 @@ android {
         targetSdkVersion 22
         versionCode 0
         versionName "0.0.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
