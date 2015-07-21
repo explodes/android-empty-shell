@@ -8,9 +8,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-/**
- * Created by evan on 2/3/14.
- */
 public class AnimConstants {
 
 	public static final Interpolator INTERP_LINEAR = new LinearInterpolator();

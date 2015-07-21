@@ -18,12 +18,12 @@ public class PropertyAnimatorSet {
 
 	public PropertyAnimatorSet() {
 		this.set = new AnimatorSet();
-		this.animations = new ArrayList<ObjectAnimator>();
+		this.animations = new ArrayList<>();
 	}
 
 	public PropertyAnimatorSet(int capacity) {
 		this.set = new AnimatorSet();
-		this.animations = new ArrayList<ObjectAnimator>(capacity);
+		this.animations = new ArrayList<>(capacity);
 	}
 
 	public PropertyAnimatorSet(PropertyAnimator... animators) {
