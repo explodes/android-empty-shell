@@ -83,9 +83,9 @@ dependencies {
     compile "com.squareup.retrofit:retrofit:1.9.0"
     compile "com.google.code.gson:gson:2.3.1"
 
-    compile "com.android.support:support-v4:22.2.0"
-    compile "com.android.support:appcompat-v7:22.2.0"
-    compile "com.android.support:recyclerview-v7:22.2.0"
+    compile "com.android.support:support-v4:23"
+    compile "com.android.support:appcompat-v7:23"
+    compile "com.android.support:recyclerview-v7:23"
 
     compile "io.reactivex:rxjava:1.0.8"
     compile "io.reactivex:rxandroid:0.24.0"
