@@ -1,5 +1,6 @@
 package io.explod.android.emptyshell.meta;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ public class AppInstrumentationTest<T extends Activity> extends ActivityInstrume
         PreferenceModule.clear(context);
     }
 
+    @SuppressLint("CommitPrefEdits")
     public static void enableMockMode(Context context) {
         SharedPreferences sp = context.getSharedPreferences(AppModule.SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

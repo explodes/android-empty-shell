@@ -214,6 +214,7 @@ public class NetworkModule {
                 try {
                     return new SimpleDateFormat(format, Locale.US).parse(jsonElement.getAsString());
                 } catch (ParseException e) {
+                    // expected exception
                 }
             }
             throw new JsonParseException("Unparseable date: \"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
