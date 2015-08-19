@@ -36,6 +36,8 @@ android {
         targetSdkVersion 23
         versionCode 0
         versionName "0.0.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -52,7 +54,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         staging.initWith(buildTypes.release)
@@ -60,12 +62,15 @@ android {
             debuggable true
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 retrolambda {
     javaVersion JavaVersion.VERSION_1_7
 }
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -83,15 +88,15 @@ dependencies {
     compile "com.squareup.retrofit:retrofit:1.9.0"
     compile "com.google.code.gson:gson:2.3.1"
 
-    compile "com.android.support:support-v4:23"
-    compile "com.android.support:appcompat-v7:23"
-    compile "com.android.support:recyclerview-v7:23"
+    compile "com.android.support:support-v4:23.0.0"
+    compile "com.android.support:appcompat-v7:23.0.0"
+    compile "com.android.support:recyclerview-v7:23.0.0"
 
     compile "io.reactivex:rxjava:1.0.8"
     compile "io.reactivex:rxandroid:0.24.0"
 
-//    compile "frankiesardo:icepick:3.0.2"
-//    provided "frankiesardo:icepick-processor:3.0.2"
+    compile "frankiesardo:icepick:3.0.2"
+    provided "frankiesardo:icepick-processor:3.0.2"
 
     compile "net.danlew:android.joda:2.7.1"
     compile "org.ocpsoft.prettytime:prettytime:3.2.7.Final"
@@ -100,5 +105,9 @@ dependencies {
         transitive = true;
     }
 
-    testCompile "junit:junit:4.12"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+
+    testCompile 'org.powermock:powermock-api-mockito:1.6.1'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.1'
 }

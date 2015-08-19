@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.ui.widget.recycler;
+package io.explod.android.emptyshell.ui.widget.recycler.recycler;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

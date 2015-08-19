@@ -1,7 +1,6 @@
 package io.explod.android.emptyshell.ui.widget.typeface;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -13,31 +12,35 @@ import io.explod.android.emptyshell.util.typeface.TypefaceManager;
 
 import static io.explod.android.emptyshell.App.getApp;
 
-
 /**
  * TextView that allows a custom font to be set with the custom typeface attribute
  */
 public class TypefaceTextView extends TextView {
 
-    @Inject
-    TypefaceManager mTypefaceManager;
+	@Inject
+	TypefaceManager mTypefaceManager;
 
-    public TypefaceTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+	public TypefaceTextView(Context context) {
+		super(context);
+	}
 
-        // Edit mode does not support custom fonts
-        if (!isInEditMode()) {
-            getApp(context).getObjectGraph().inject(this);
-            int[] attrsArray = new int[]{android.R.attr.textStyle};
-            TypedArray androidAttrs = context.obtainStyledAttributes(attrs, attrsArray, android.R.attr.textViewStyle, 0);
-            int textStyle = androidAttrs.getInt(0, Typeface.NORMAL);
-            androidAttrs.recycle();
+	public TypefaceTextView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		loadAttrs(context, attrs);
+	}
 
-            TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.TypefaceTextView, android.R.attr.textViewStyle, 0);
-            int mTypefaceAttributeValue = styledAttrs.getInt(R.styleable.TypefaceTextView_typeface, TypefaceManager.FOO_FONT.attributeValue);
-            styledAttrs.recycle();
+	public TypefaceTextView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		loadAttrs(context, attrs);
+	}
 
-            mTypefaceManager.applyTypeface(this, mTypefaceAttributeValue, textStyle);
-        }
-    }
+	private void loadAttrs(Context context, AttributeSet attrs) {
+		if (!isInEditMode()) {
+			getApp().getObjectGraph().inject(this);
+			Typeface typeface = mTypefaceManager.getTypeface(context, attrs, R.styleable.TypefaceButton, R.styleable.TypefaceButton_typeface);
+			if (typeface != null) {
+				setTypeface(typeface);
+			}
+		}
+	}
 }

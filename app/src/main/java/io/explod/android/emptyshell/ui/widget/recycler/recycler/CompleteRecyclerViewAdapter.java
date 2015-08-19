@@ -1,11 +1,14 @@
-package io.explod.android.emptyshell.ui.widget.recycler;
+package io.explod.android.emptyshell.ui.widget.recycler.recycler;
 
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CompleteRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class CompleteRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends ClickableRecyclerViewAdapter<VH> {
 
 	private boolean mLoaded = false;
 
@@ -14,6 +17,18 @@ public abstract class CompleteRecyclerViewAdapter<VH extends RecyclerView.ViewHo
 	}
 
 	private final List<LoadableAdapterDataObserver> mLoadableAdapterDataObservers = new ArrayList<>();
+
+	public CompleteRecyclerViewAdapter() {
+		super();
+	}
+
+	public CompleteRecyclerViewAdapter(@Nullable View.OnClickListener onClickListener) {
+		super(onClickListener);
+	}
+
+	public CompleteRecyclerViewAdapter(@Nullable View.OnClickListener onClickListener, @IdRes int positionTag) {
+		super(onClickListener, positionTag);
+	}
 
 	@Override
 	public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge style="@style/CompleteRecylerView"
-       xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       tools:context=".ui.widget.recycler.CompleteRecyclerView">
-
+<merge
+    style="@style/CompleteRecyclerView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.widget.recycler.CompleteRecyclerView">
 
     <ProgressBar
         android:id="@+id/loading"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/empty"
-        style="@style/CompleteRecylerView.Message"
+        style="@style/CompleteRecyclerView.Message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -37,7 +37,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/inner_list"
-            style="@style/CompleteRecylerView.List"
+            style="@style/CompleteRecyclerView.List"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"

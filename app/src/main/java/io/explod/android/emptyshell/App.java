@@ -1,7 +1,6 @@
 package io.explod.android.emptyshell;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -14,34 +13,40 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application {
 
-    private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
-        .appModule(new AppModule(this))
-        .build();
+	private static App sInstance;
 
-    public static App getApp(Context context) {
-        return ((App) context.getApplicationContext());
-    }
+	private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
+		.appModule(new AppModule(this))
+		.build();
 
-    public ObjectGraph getObjectGraph() {
-        return mObjectGraph;
-    }
+	public static App getApp() {
+		return sInstance;
+	}
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (!BuildConfig.DEBUG) {
-            // Production Stuff
-            onCreateInProductionMode();
-        }
-        JodaTimeAndroid.init(this);
+	public ObjectGraph getObjectGraph() {
+		return mObjectGraph;
+	}
 
-        //PreferenceModule.clear(this);
-    }
+	@Override
+	public void onCreate() {
+		super.onCreate();
 
-    /**
-     * Do things when not in DEBUG mode, onCreate.
-     */
-    private void onCreateInProductionMode() {
-        Fabric.with(getApplicationContext(), new Crashlytics());
-    }
+		sInstance = this;
+
+		if (!BuildConfig.DEBUG) {
+			// Production Stuff
+			onCreateInProductionMode();
+		}
+		JodaTimeAndroid.init(this);
+
+		//PreferenceModule.clear(this);
+	}
+
+	/**
+	 * Do things when not in DEBUG mode, onCreate.
+	 */
+	private void onCreateInProductionMode() {
+		Fabric.with(getApplicationContext(), new Crashlytics());
+	}
+
 }

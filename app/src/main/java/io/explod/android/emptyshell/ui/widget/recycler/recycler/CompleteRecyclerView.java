@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.ui.widget.recycler;
+package io.explod.android.emptyshell.ui.widget.recycler.recycler;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;

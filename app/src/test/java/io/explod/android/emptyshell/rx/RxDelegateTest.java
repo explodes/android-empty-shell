@@ -2,19 +2,14 @@ package io.explod.android.emptyshell.rx;
 
 import android.support.annotation.NonNull;
 
-import org.junit.Test;
+import junit.framework.TestCase;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.explod.android.emptyshell.rx.NoCompleteObserver;
-import io.explod.android.emptyshell.rx.RxDelegate;
 import rx.Observer;
 import rx.Subscription;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class RxDelegateTest {
+public class RxDelegateTest extends TestCase {
 
 	static class TesterRxDelegate<T> extends RxDelegate<T> {
 		@NonNull
@@ -24,12 +19,10 @@ public class RxDelegateTest {
 		}
 	}
 
-	@Test
 	public void testGetSink() throws Exception {
 		assertNotNull(new TesterRxDelegate<String>().getSink());
 	}
 
-	@Test
 	public void testSubscribe() throws Exception {
 
 		final AtomicInteger errorCount = new AtomicInteger(0);
@@ -46,7 +39,6 @@ public class RxDelegateTest {
 				assertEquals(s, "cool mode");
 			}
 		};
-
 
 		TesterRxDelegate<String> delegate = new TesterRxDelegate<>();
 
@@ -99,6 +91,5 @@ public class RxDelegateTest {
 		assertEquals(0, nextCount.get()); // no next, only error
 		assertEquals(1, errorCount.get());
 	}
-
 
 }

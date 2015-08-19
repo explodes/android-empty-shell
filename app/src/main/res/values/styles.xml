@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="CompleteRecylerView">
+    <style name="CompleteRecyclerView">
     </style>
 
-    <style name="CompleteRecylerView.List">
+    <style name="CompleteRecyclerView.List">
     </style>
 
-    <style name="CompleteRecylerView.Message">
+    <style name="CompleteRecyclerView.Message">
     </style>
 
 </resources>

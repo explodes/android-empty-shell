@@ -9,9 +9,9 @@ import io.explod.android.emptyshell.util.typeface.TypefaceManager;
 @Module
 public class TypefaceModule {
 
-    @Provides
-    @Singleton
-    TypefaceManager providesTypefaceManager() {
-        return new TypefaceManager();
-    }
+	@Provides
+	@Singleton
+	TypefaceManager providesTypefaceManager() {
+		return new TypefaceManager();
+	}
 }
