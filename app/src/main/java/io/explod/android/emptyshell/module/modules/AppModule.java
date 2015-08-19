@@ -40,7 +40,9 @@ public class AppModule {
         Picasso picasso = new Picasso.Builder(context).listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                Log.d(PICASSO_LOG_TAG, (exception == null ? "Unknown Error" : exception.getMessage()) + ": " + (uri == null ? "no-uri-specified" : uri.toString()));
+                String message = exception == null ? "Unknown Error" : exception.getMessage();
+                String uriMessage = uri == null ? "no-uri-specified" : uri.toString();
+                Log.d(PICASSO_LOG_TAG, message + ": " + uriMessage);
             }
         }).build();
         if (BuildConfig.DEBUG) {
