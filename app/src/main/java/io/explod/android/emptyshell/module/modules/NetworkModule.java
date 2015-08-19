@@ -2,14 +2,12 @@ package io.explod.android.emptyshell.module.modules;
 
 import android.app.Application;
 import android.os.Build;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.inject.Named;
@@ -139,14 +137,8 @@ public class NetworkModule {
 	@Singleton
 	Cache providesHttpResponseCache(Application context) {
 		// Create an HTTP cache in the application cache directory.
-		Cache cache = null;
 		File cacheDir = new File(context.getCacheDir(), HTTP_DISK_CACHE_DIR);
-		try {
-			cache = new Cache(cacheDir, HTTP_DISK_CACHE_SIZE);
-		} catch (IOException e) {
-			Log.w(TAG, "Unable to create disk cache.", e);
-		}
-		return cache;
+		return new Cache(cacheDir, HTTP_DISK_CACHE_SIZE);
 	}
 
 	private String createUserAgent() {
