@@ -7,7 +7,7 @@ import android.view.animation.Interpolator;
 
 /**
  * Created by evan on 1/29/14.
- * <p/>
+ * <p>
  * ObjectAnimator with chained calls.
  */
 public class PropertyAnimator {

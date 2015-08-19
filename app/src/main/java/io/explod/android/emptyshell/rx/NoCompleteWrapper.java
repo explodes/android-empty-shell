@@ -4,7 +4,7 @@ import rx.Observer;
 
 /**
  * Wrapper for an Observer that forwards onNext and onError but NOT onComplete.
- * <p/>
+ * <p>
  * It is useful for sinking to a Subject that you do not want to complete.
  *
  * @param <T> the type of item the Observer expects to observe

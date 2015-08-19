@@ -8,15 +8,15 @@ import rx.subjects.BehaviorSubject;
 
 /**
  * Delegate for Rx events.
- * <p/>
+ * <p>
  * Think of this as kind of a Publisher that specializes in RxEvents.
- * <p/>
+ * <p>
  * Events from other sources are forwarded from this object and the last of
  * those items are forwarded to new subscribers (callbacks).
- * <p/>
+ * <p>
  * One use for a delegate is to have network IO that doesn't get interrupted by
  * screen rotation or other configuration changes.
- * <p/>
+ * <p>
  * Delegates do NOT forward an onComplete(). You make subscribe with a {@link NoCompleteObserver}
  *
  * @param <T> type of items this delegate will emit
@@ -30,7 +30,7 @@ public abstract class RxDelegate<T> {
 
 	/**
 	 * Sink that delegate functions should emit items to.
-	 * <p/>
+	 * <p>
 	 * Example:
 	 * <pre>
 	 * private void search(String query) {
@@ -44,7 +44,7 @@ public abstract class RxDelegate<T> {
 
 	/**
 	 * Get the item to which inner Observables should subscribe
-	 * <p/>
+	 * <p>
 	 * Example:
 	 * <pre>
 	 * private void search(String query) {
@@ -61,7 +61,7 @@ public abstract class RxDelegate<T> {
 
 	/**
 	 * Observable to subscribe to this delegate's events from.
-	 * <p/>
+	 * <p>
 	 * Delegates do NOT forward an onComplete(). You make subscribe with a {@link NoCompleteObserver}
 	 */
 	@NonNull
