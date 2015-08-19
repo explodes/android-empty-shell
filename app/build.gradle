@@ -41,25 +41,26 @@ android {
     }
 
     signingConfigs {
-        debug {
-        }
         release {
             storeFile file("keys/release.keystore")
             storePassword "<edit me>"
             keyAlias "<edit me>"
             keyPassword "<edit me>"
         }
-        staging.initWith(signingConfigs.release)
     }
 
     buildTypes {
+        debug {
+        }
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            proguardFile 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
-        staging.initWith(buildTypes.release)
         staging {
             debuggable true
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
