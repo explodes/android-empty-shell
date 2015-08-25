@@ -12,6 +12,7 @@ import com.crashlytics.android.Crashlytics;
 
 import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.R;
+import io.explod.android.emptyshell.ui.activity.BaseActivity;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
 import io.explod.android.emptyshell.ui.dialog.HasToast;
 import rx.Observable;
@@ -122,5 +123,42 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 
 	protected <T> Observable<T> bind(Observable<T> observable) {
 		return bindFragment(this, observable);
+	}
+
+	// Activity calls - shortcuts to methods on Activity or BaseActivity
+
+	public void openFragment(FullFragment fragment, boolean append) {
+		BaseActivity activity = (BaseActivity) getActivity();
+		if (activity != null) {
+			activity.openFragment(fragment, append);
+		}
+	}
+
+	public void setTitle(CharSequence title) {
+		BaseActivity activity = (BaseActivity) getActivity();
+		if (activity != null) {
+			activity.setTitle(title);
+		}
+	}
+
+	public void setTitle(@StringRes int titleRes) {
+		BaseActivity activity = (BaseActivity) getActivity();
+		if (activity != null) {
+			activity.setTitle(titleRes);
+		}
+	}
+
+	public void setSubtitle(CharSequence subtitle) {
+		BaseActivity activity = (BaseActivity) getActivity();
+		if (activity != null) {
+			activity.setSubtitle(subtitle);
+		}
+	}
+
+	public void setSubtitle(@StringRes int subtitleRes) {
+		BaseActivity activity = (BaseActivity) getActivity();
+		if (activity != null) {
+			activity.setSubtitle(subtitleRes);
+		}
 	}
 }

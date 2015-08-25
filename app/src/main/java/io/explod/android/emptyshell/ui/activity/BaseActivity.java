@@ -2,28 +2,57 @@ package io.explod.android.emptyshell.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import icepick.State;
 import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
 import io.explod.android.emptyshell.ui.dialog.HasToast;
+import io.explod.android.emptyshell.ui.fragment.FragmentState;
+import io.explod.android.emptyshell.ui.fragment.FullFragment;
 import rx.Observable;
 
+import static android.text.TextUtils.isEmpty;
 import static rx.android.app.AppObservable.bindActivity;
 
 public abstract class BaseActivity extends AppCompatActivity implements HasDialogs, HasToast {
 
 	private static final String TAG = BaseActivity.class.getSimpleName();
 
+	private static class FragmentStackItem implements Serializable {
+
+		@NonNull
+		String name;
+
+		@NonNull
+		FragmentState state;
+
+		FragmentStackItem(@NonNull FullFragment fragment) {
+			name = fragment.getClass().getName();
+			state = fragment.getFragmentState();
+		}
+	}
+
 	private ProgressDialog mProgressDialog;
 
 	private AlertDialog mAlertDialog;
+
+	@State
+	ArrayList<FragmentStackItem> mFragmentStackItems;
 
 	@Override
 	public void showAlertDialog(@StringRes int messageResId) {
@@ -96,6 +125,92 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 
 	protected <T> Observable<T> bind(Observable<T> observable) {
 		return bindActivity(this, observable);
+	}
+
+	public void openFragment(@NonNull FullFragment fragment, boolean appendFragment) {
+		if (BuildConfig.DEBUG) {
+			Log.v(TAG, "openFragment " + appendFragment + ": " + fragment.getClass().getName());
+		}
+
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		// if this is going to be the only fragment, clear the title stack
+		if (!appendFragment) {
+			mFragmentStackItems.clear();
+			fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		}
+
+		FragmentStackItem stackItem = new FragmentStackItem(fragment);
+		stackItem.state.setTo(this);
+		mFragmentStackItems.add(stackItem);
+
+		FragmentTransaction transaction = fragmentManager.beginTransaction();
+		transaction.replace(R.id.container, fragment, stackItem.state.getTag());
+		if (appendFragment) {
+			transaction.addToBackStack(null);
+		}
+		transaction.commit();
+	}
+
+	@Override
+	public void onBackPressed() {
+		popFragmentState();
+		super.onBackPressed();
+	}
+
+	@Nullable
+	public String getCurrentFragmentName() {
+		if (mFragmentStackItems == null || mFragmentStackItems.isEmpty()) {
+			return null;
+		}
+		int N = mFragmentStackItems.size();
+		FragmentStackItem item = mFragmentStackItems.get(N - 1);
+		return item.name;
+	}
+
+	public boolean isCurrentFragment(Class<? extends FullFragment> fragmentClass) {
+		String currentFragmentName = getCurrentFragmentName();
+		return !isEmpty(currentFragmentName) && currentFragmentName.equals(fragmentClass.getName());
+	}
+
+	protected boolean popFragmentState() {
+		int size = mFragmentStackItems.size();
+		if (size >= 2) { // if there is even a title to pop AND a title to use
+			mFragmentStackItems.remove(size - 1); // last item
+
+			// change the title to the last non-zero title
+			FragmentStackItem stackItem = mFragmentStackItems.get(size - 2);
+			// new last item
+			stackItem.state.setTo(this);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void setTitle(CharSequence title) {
+		super.setTitle(title);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setTitle(title == null ? "" : title);
+		}
+	}
+
+	public void setSubtitle(CharSequence subtitle) {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setSubtitle(subtitle == null ? "" : subtitle);
+		}
+	}
+
+	public void setSubtitle(@StringRes int subtitleRes) {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			if (subtitleRes == 0) {
+				actionBar.setSubtitle("");
+			} else {
+				actionBar.setSubtitle(subtitleRes);
+			}
+		}
 	}
 
 }
