@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 
 import io.explod.android.emptyshell.BuildConfig;
+import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
 import io.explod.android.emptyshell.ui.dialog.HasToast;
 import rx.Observable;
@@ -18,6 +19,8 @@ import rx.Observable;
 import static rx.android.app.AppObservable.bindFragment;
 
 public abstract class BaseFragment extends Fragment implements HasDialogs, HasToast {
+
+	private static final String TAG = BaseFragment.class.getSimpleName();
 
 	private ProgressDialog mProgressDialog;
 
@@ -99,12 +102,20 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 
 	}
 
-	protected void logException(String description, Throwable error, @StringRes int toastResId, boolean log) {
-		Log.e(getClass().getSimpleName(), description, error);
-		if (toastResId != 0) {
-			toastShort(toastResId);
+	public void showUnexpectedErrorDialog(Throwable error, boolean log) {
+		Log.e(TAG, "unexpected error", error);
+		if (log) {
+			logException(error);
 		}
-		if (log && !BuildConfig.DEBUG) {
+		showUnexpectedErrorDialog();
+	}
+
+	public void showUnexpectedErrorDialog() {
+		showAlertDialog(R.string.dialog_unexpected_error);
+	}
+
+	protected void logException(Throwable error) {
+		if (!BuildConfig.DEBUG) {
 			Crashlytics.logException(error);
 		}
 	}

@@ -4,8 +4,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.explod.android.emptyshell.BuildConfig;
+import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
 import io.explod.android.emptyshell.ui.dialog.HasToast;
 import rx.Observable;
@@ -13,6 +18,8 @@ import rx.Observable;
 import static rx.android.app.AppObservable.bindActivity;
 
 public abstract class BaseActivity extends AppCompatActivity implements HasDialogs, HasToast {
+
+	private static final String TAG = BaseActivity.class.getSimpleName();
 
 	private ProgressDialog mProgressDialog;
 
@@ -47,6 +54,24 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		}
 		mProgressDialog.setMessage(message);
 		mProgressDialog.show();
+	}
+
+	public void showUnexpectedErrorDialog(Throwable error, boolean log) {
+		Log.e(TAG, "unexpected error", error);
+		if (log) {
+			logException(error);
+		}
+		showUnexpectedErrorDialog();
+	}
+
+	public void showUnexpectedErrorDialog() {
+		showAlertDialog(R.string.dialog_unexpected_error);
+	}
+
+	protected void logException(Throwable error) {
+		if (!BuildConfig.DEBUG) {
+			Crashlytics.logException(error);
+		}
 	}
 
 	@Override
