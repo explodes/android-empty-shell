@@ -1,12 +1,18 @@
 package io.explod.android.emptyshell.ui.widget.recycler;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,31 +26,39 @@ public class CompleteRecyclerView extends FrameLayout {
 
 	private static final int MODE_LIST = 2;
 
+	@IntDef({MODE_LOADING, MODE_EMPTY, MODE_LIST})
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface DisplayMode {
+	}
+
+	@DisplayMode
 	private int mMode = MODE_LOADING;
 
-	private boolean mLoaded = false;
+	private int mLoaded = -1;
 
 	@Bind(R.id.inner_list)
 	RecyclerView mRecyclerView;
 
+	@Nullable
 	@Bind(R.id.empty)
 	View mEmptyView;
 
+	@Nullable
 	@Bind(R.id.loading)
 	View mLoadingView;
 
 	@Bind(R.id.refresher)
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
-	CompleteRecyclerViewAdapter.LoadableAdapterDataObserver mObserver = new CompleteRecyclerViewAdapter.LoadableAdapterDataObserver() {
+	CompleteRecyclerViewAdapter.LoadingAdapterDataObserver mObserver = new CompleteRecyclerViewAdapter.LoadingAdapterDataObserver() {
 		@Override
 		public void onChanged() {
 			updateDisplayedView();
 		}
 
 		@Override
-		public void onLoaded(boolean loaded) {
-			setLoaded(loaded);
+		public void onLoaded(int numItems) {
+			setLoaded(numItems);
 		}
 
 	};
@@ -78,22 +92,21 @@ public class CompleteRecyclerView extends FrameLayout {
 		return mRecyclerView;
 	}
 
-	public void setRecyclerView(RecyclerView recyclerView) {
+	public void setRecyclerView(@NonNull RecyclerView recyclerView) {
 		if (mRecyclerView != null) {
 			removeView(mRecyclerView);
 		}
 		mRecyclerView = recyclerView;
-		if (recyclerView != null) {
-			addView(recyclerView);
-		}
+		addView(recyclerView);
 		showMode();
 	}
 
+	@Nullable
 	public View getEmptyView() {
 		return mEmptyView;
 	}
 
-	public void setEmptyView(View emptyView) {
+	public void setEmptyView(@Nullable View emptyView) {
 		if (mEmptyView != null) {
 			removeView(mEmptyView);
 		}
@@ -104,11 +117,12 @@ public class CompleteRecyclerView extends FrameLayout {
 		showMode();
 	}
 
+	@Nullable
 	public View getLoadingView() {
 		return mLoadingView;
 	}
 
-	public void setLoadingView(View loadingView) {
+	public void setLoadingView(@Nullable View loadingView) {
 		if (mLoadingView != null) {
 			removeView(mLoadingView);
 		}
@@ -119,12 +133,12 @@ public class CompleteRecyclerView extends FrameLayout {
 		showMode();
 	}
 
-	public void setLoaded(boolean loaded) {
-		mLoaded = loaded;
+	public void setLoaded(int numItems) {
+		mLoaded = numItems;
 		updateDisplayedView();
 	}
 
-	public void showListView() {
+	public void showRecyclerView() {
 		showMode(MODE_LIST);
 	}
 
@@ -136,35 +150,49 @@ public class CompleteRecyclerView extends FrameLayout {
 		showMode(MODE_LOADING);
 	}
 
-	private void showMode(int mode) {
+	private void showMode(@DisplayMode int mode) {
 		mMode = mode;
 		showMode();
 	}
 
 	private void showMode() {
-		int mode = mMode; // read mode once to avoid weird async glitches
+		boolean loading = false;
+		boolean empty = false;
+		boolean recycler = true;
+
+		switch (mMode) {
+			case MODE_EMPTY:
+				if (mEmptyView != null) {
+					empty = true;
+					recycler = false;
+				}
+				break;
+			case MODE_LOADING:
+				if (mLoadingView != null) {
+					loading = true;
+					recycler = false;
+				}
+				break;
+		}
+
 		if (mLoadingView != null) {
-			mLoadingView.setVisibility(mode == MODE_LOADING ? VISIBLE : GONE);
+			mLoadingView.setVisibility(loading ? VISIBLE : GONE);
 		}
 		if (mEmptyView != null) {
-			mEmptyView.setVisibility(mode == MODE_EMPTY ? VISIBLE : GONE);
+			mEmptyView.setVisibility(empty ? VISIBLE : GONE);
 		}
 		if (mRecyclerView != null) {
-			mRecyclerView.setVisibility(mode == MODE_LIST ? VISIBLE : GONE);
+			mRecyclerView.setVisibility(recycler ? VISIBLE : GONE);
 		}
 	}
 
 	private void updateDisplayedView() {
-		if (mLoaded) {
-			// empty or list
-			RecyclerView.Adapter adapter = mRecyclerView == null ? null : mRecyclerView.getAdapter();
-			if (adapter == null || adapter.getItemCount() == 0) {
-				showEmptyView();
-			} else {
-				showListView();
-			}
-		} else {
+		if (mLoaded < 0) {
 			showLoadingView();
+		} else if (mLoaded == 0) {
+			showEmptyView();
+		} else {
+			showRecyclerView();
 		}
 	}
 
