@@ -2,6 +2,7 @@ package io.explod.android.emptyshell.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -186,6 +187,20 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		return false;
 	}
 
+	protected void logFragmentStack(String message) {
+		Log.d(TAG, "fragment stack: " + message);
+
+		if (mFragmentStackItems == null) {
+			Log.d(TAG, " - empty");
+			return;
+		}
+
+		for (int index = mFragmentStackItems.size() - 1; index >= 0; index--) {
+			FragmentStackItem item = mFragmentStackItems.get(index);
+			Log.d(TAG, " - " + item.name + " :: " + item.state);
+		}
+	}
+
 	@Override
 	public void setTitle(CharSequence title) {
 		super.setTitle(title);
@@ -211,6 +226,21 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 				actionBar.setSubtitle(subtitleRes);
 			}
 		}
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		// restore top state
+		// requires
+		//     android:configChanges="orientation|screenSize"
+		// in activity manifest
+		int size = mFragmentStackItems == null ? 0 : mFragmentStackItems.size();
+		if (size == 0) {
+			return;
+		}
+		mFragmentStackItems.get(size - 1).state.setTo(this);
 	}
 
 }
