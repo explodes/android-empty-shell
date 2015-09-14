@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.rx;
+package io.explod.android.emptyshell.util;
 
 import android.support.annotation.NonNull;
 
@@ -6,6 +6,8 @@ import junit.framework.TestCase;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.explod.android.emptyshell.util.rx.NoCompleteObserver;
+import io.explod.android.emptyshell.util.rx.RxDelegate;
 import rx.Observer;
 import rx.Subscription;
 

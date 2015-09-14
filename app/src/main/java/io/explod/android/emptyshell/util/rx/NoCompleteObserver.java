@@ -1,4 +1,4 @@
-package io.explod.android.emptyshell.rx;
+package io.explod.android.emptyshell.util.rx;
 
 import rx.Observer;
 
