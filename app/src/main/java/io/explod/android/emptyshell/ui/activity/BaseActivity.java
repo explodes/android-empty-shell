@@ -14,11 +14,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import icepick.State;
+import io.explod.android.emptyshell.App;
 import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
@@ -243,4 +245,10 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		mFragmentStackItems.get(size - 1).state.setTo(this);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		RefWatcher refWatcher = App.getRefWatcher();
+		refWatcher.watch(this);
+	}
 }

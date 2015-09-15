@@ -3,6 +3,8 @@ package io.explod.android.emptyshell;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -27,6 +29,12 @@ public class App extends Application {
 		return mObjectGraph;
 	}
 
+	public static RefWatcher getRefWatcher() {
+		return getApp().refWatcher;
+	}
+
+	private RefWatcher refWatcher;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -38,6 +46,8 @@ public class App extends Application {
 			onCreateInProductionMode();
 		}
 		JodaTimeAndroid.init(this);
+
+		refWatcher = LeakCanary.install(this);
 
 		//PreferenceModule.clear(this);
 	}
