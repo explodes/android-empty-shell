@@ -30,7 +30,12 @@
 # or have been blown up by ProGuard in the past
 -keep class io.explod.android.emptyshell.model.** { *; }
 
-## ---------------- End Project specifics ---------------- ##git
+## ---------------- End Project specifics ---------------- ##
+
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
 
 # Keep the support library
 -keep class android.support.v4.** { *; }
