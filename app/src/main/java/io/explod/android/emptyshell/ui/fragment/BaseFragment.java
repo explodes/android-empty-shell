@@ -1,25 +1,25 @@
 package io.explod.android.emptyshell.ui.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
+import com.trello.rxlifecycle.components.support.RxFragment;
 
-import io.explod.android.emptyshell.BuildConfig;
 import io.explod.android.emptyshell.R;
 import io.explod.android.emptyshell.ui.activity.BaseActivity;
 import io.explod.android.emptyshell.ui.dialog.HasDialogs;
 import io.explod.android.emptyshell.ui.dialog.HasToast;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
-import static rx.android.app.AppObservable.bindFragment;
+import static io.explod.android.emptyshell.App.logException;
 
-public abstract class BaseFragment extends Fragment implements HasDialogs, HasToast {
+public abstract class BaseFragment extends RxFragment implements HasDialogs, HasToast {
 
 	private static final String TAG = BaseFragment.class.getSimpleName();
 
@@ -35,7 +35,10 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 
 	@Override
 	public void showAlertDialog(@StringRes int messageResId) {
-		showAlertDialog(getResources().getText(messageResId));
+		Activity activity = getActivity();
+		if (activity != null) {
+			showAlertDialog(activity.getResources().getText(messageResId));
+		}
 	}
 
 	@Override
@@ -57,7 +60,10 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 
 	@Override
 	public void showProgressDialog(@StringRes int messageResId) {
-		showProgressDialog(getResources().getText(messageResId));
+		Activity activity = getActivity();
+		if (activity != null) {
+			showProgressDialog(activity.getResources().getText(messageResId));
+		}
 	}
 
 	@Override
@@ -103,11 +109,14 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 
 	}
 
-	public void showUnexpectedErrorDialog(Throwable error, boolean log) {
+	/**
+	 * Show an "Unexpected Error" alert and log the exception.
+	 *
+	 * @param error Exception to log
+	 */
+	public void showUnexpectedErrorDialog(Throwable error) {
 		Log.e(TAG, "unexpected error", error);
-		if (log) {
-			logException(error);
-		}
+		logException(error);
 		showUnexpectedErrorDialog();
 	}
 
@@ -115,23 +124,14 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 		showAlertDialog(R.string.dialog_unexpected_error);
 	}
 
-	protected void logException(Throwable error) {
-		if (!BuildConfig.DEBUG) {
-			Crashlytics.logException(error);
-		}
-	}
-
-	protected <T> Observable<T> bind(Observable<T> observable) {
-		return bindFragment(this, observable);
-	}
-
 	// Activity calls - shortcuts to methods on Activity or BaseActivity
 
 	public void openFragment(FullFragment fragment, boolean append) {
 		BaseActivity activity = (BaseActivity) getActivity();
-		if (activity != null) {
-			activity.openFragment(fragment, append);
+		if (activity == null) {
+			return;
 		}
+		activity.openFragment(fragment, append);
 	}
 
 	public void setTitle(CharSequence title) {
@@ -160,5 +160,15 @@ public abstract class BaseFragment extends Fragment implements HasDialogs, HasTo
 		if (activity != null) {
 			activity.setSubtitle(subtitleRes);
 		}
+	}
+
+	public void throwNotUsingNewInstance() {
+		throw new IllegalStateException("always use newInstance when constructing fragments");
+	}
+
+	protected <T> Observable<T> bind(Observable<T> observable) {
+		return observable
+			.compose(bindToLifecycle())
+			.observeOn(AndroidSchedulers.mainThread());
 	}
 }

@@ -3,6 +3,7 @@ package io.explod.android.emptyshell.ui.activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -13,12 +14,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.RefWatcher;
+import com.trello.rxlifecycle.ActivityEvent;
+import com.trello.rxlifecycle.RxLifecycle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import icepick.Icepick;
 import icepick.State;
 import io.explod.android.emptyshell.App;
 import io.explod.android.emptyshell.BuildConfig;
@@ -28,9 +31,11 @@ import io.explod.android.emptyshell.ui.dialog.HasToast;
 import io.explod.android.emptyshell.ui.fragment.FragmentState;
 import io.explod.android.emptyshell.ui.fragment.FullFragment;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subjects.BehaviorSubject;
 
 import static android.text.TextUtils.isEmpty;
-import static rx.android.app.AppObservable.bindActivity;
+import static io.explod.android.emptyshell.App.logException;
 
 public abstract class BaseActivity extends AppCompatActivity implements HasDialogs, HasToast {
 
@@ -50,12 +55,62 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		}
 	}
 
+	private final BehaviorSubject<ActivityEvent> mLifecycleSubject = BehaviorSubject.create();
+
 	private ProgressDialog mProgressDialog;
 
 	private AlertDialog mAlertDialog;
 
 	@State
 	ArrayList<FragmentStackItem> mFragmentStackItems;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Icepick.restoreInstanceState(this, savedInstanceState);
+		if (mFragmentStackItems == null) {
+			mFragmentStackItems = new ArrayList<>();
+		}
+		mLifecycleSubject.onNext(ActivityEvent.CREATE);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mLifecycleSubject.onNext(ActivityEvent.START);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mLifecycleSubject.onNext(ActivityEvent.RESUME);
+	}
+
+	@Override
+	protected void onPause() {
+		mLifecycleSubject.onNext(ActivityEvent.PAUSE);
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		mLifecycleSubject.onNext(ActivityEvent.STOP);
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		mLifecycleSubject.onNext(ActivityEvent.DESTROY);
+		super.onDestroy();
+		RefWatcher refWatcher = App.getRefWatcher();
+		refWatcher.watch(this);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Icepick.saveInstanceState(this, outState);
+	}
 
 	@Override
 	public void showAlertDialog(@StringRes int messageResId) {
@@ -88,22 +143,19 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		mProgressDialog.show();
 	}
 
-	public void showUnexpectedErrorDialog(Throwable error, boolean log) {
+	/**
+	 * Show an "Unexpected Error" alert and log the exception.
+	 *
+	 * @param error Exception to log
+	 */
+	public void showUnexpectedErrorDialog(Throwable error) {
 		Log.e(TAG, "unexpected error", error);
-		if (log) {
-			logException(error);
-		}
+		logException(error);
 		showUnexpectedErrorDialog();
 	}
 
 	public void showUnexpectedErrorDialog() {
 		showAlertDialog(R.string.dialog_unexpected_error);
-	}
-
-	protected void logException(Throwable error) {
-		if (!BuildConfig.DEBUG) {
-			Crashlytics.logException(error);
-		}
 	}
 
 	@Override
@@ -124,10 +176,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 	@Override
 	public void toastLong(@StringRes int messageResId) {
 		Toast.makeText(this, messageResId, Toast.LENGTH_LONG).show();
-	}
-
-	protected <T> Observable<T> bind(Observable<T> observable) {
-		return bindActivity(this, observable);
 	}
 
 	public void openFragment(@NonNull FullFragment fragment, boolean appendFragment) {
@@ -152,6 +200,8 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 			transaction.addToBackStack(null);
 		}
 		transaction.commit();
+
+		logFragmentStack("openFragment: " + fragment);
 	}
 
 	@Override
@@ -177,15 +227,18 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 
 	protected boolean popFragmentState() {
 		int size = mFragmentStackItems.size();
-		if (size >= 2) { // if there is even a title to pop AND a title to use
+		if (size >= 2) { // if there is even an item to pop AND an item to use
 			mFragmentStackItems.remove(size - 1); // last item
 
 			// change the title to the last non-zero title
 			FragmentStackItem stackItem = mFragmentStackItems.get(size - 2);
 			// new last item
 			stackItem.state.setTo(this);
+
+			logFragmentStack("popFragmentStack: true");
 			return true;
 		}
+		logFragmentStack("popFragmentStack: false");
 		return false;
 	}
 
@@ -245,10 +298,22 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		mFragmentStackItems.get(size - 1).state.setTo(this);
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		RefWatcher refWatcher = App.getRefWatcher();
-		refWatcher.watch(this);
+	protected <T> Observable<T> bind(Observable<T> observable) {
+		return observable
+			.compose(bindToLifecycle())
+			.observeOn(AndroidSchedulers.mainThread());
 	}
+
+	protected final Observable<ActivityEvent> lifecycle() {
+		return mLifecycleSubject.asObservable();
+	}
+
+	protected final <T> Observable.Transformer<T, T> bindUntilEvent(ActivityEvent event) {
+		return RxLifecycle.bindUntilActivityEvent(mLifecycleSubject, event);
+	}
+
+	protected final <T> Observable.Transformer<T, T> bindToLifecycle() {
+		return RxLifecycle.bindActivity(mLifecycleSubject);
+	}
+
 }

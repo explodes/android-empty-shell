@@ -1,6 +1,7 @@
 package io.explod.android.emptyshell;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
@@ -14,6 +15,8 @@ import io.explod.android.emptyshell.module.modules.AppModule;
 import io.fabric.sdk.android.Fabric;
 
 public class App extends Application {
+
+	private static final String TAG = App.class.getSimpleName();
 
 	private static App sInstance;
 
@@ -44,7 +47,11 @@ public class App extends Application {
 		if (!BuildConfig.DEBUG) {
 			// Production Stuff
 			onCreateInProductionMode();
+		} else {
+			// Debug Stuff
+			onCreateDebugMode();
 		}
+
 		JodaTimeAndroid.init(this);
 
 		refWatcher = LeakCanary.install(this);
@@ -57,6 +64,25 @@ public class App extends Application {
 	 */
 	private void onCreateInProductionMode() {
 		Fabric.with(getApplicationContext(), new Crashlytics());
+	}
+
+	private void onCreateDebugMode() {
+		enabledStrictMode();
+	}
+
+	private void enabledStrictMode() {
+//			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//				.detectAll()
+//				.penaltyLog()
+//				.penaltyDeath()
+//				.build());
+	}
+
+	public static void logException(Throwable error) {
+		Log.e(TAG, "An exception has occurred", error);
+		if (!BuildConfig.DEBUG) {
+			Crashlytics.logException(error);
+		}
 	}
 
 }
