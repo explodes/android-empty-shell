@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import rx.Observable;
 import rx.Observer;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.Subject;
 
 /**
  * Delegate for Rx events.
@@ -24,9 +25,9 @@ import rx.subjects.BehaviorSubject;
 public abstract class RxDelegate<T> {
 
 	/**
-	 * Subject the sink published
+	 * Subject the sink publishes to
 	 */
-	private BehaviorSubject<T> mSubject = BehaviorSubject.create();
+	private Subject<T, T> mSubject;
 
 	/**
 	 * Sink that delegate functions should emit items to.
@@ -41,6 +42,21 @@ public abstract class RxDelegate<T> {
 	 * </pre>
 	 */
 	private Observer<T> mSink = new NoCompleteWrapper<>(mSubject);
+
+	/**
+	 * Construct this beauty
+	 */
+	public RxDelegate() {
+		mSubject = initializeSubject();
+	}
+
+	/**
+	 * Create the default subject for publishing events and data
+	 */
+	@NonNull
+	protected Subject<T, T> initializeSubject() {
+		return BehaviorSubject.create();
+	}
 
 	/**
 	 * Get the item to which inner Observables should subscribe
