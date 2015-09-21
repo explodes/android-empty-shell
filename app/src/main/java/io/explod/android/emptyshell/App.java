@@ -44,12 +44,14 @@ public class App extends Application {
 
 		sInstance = this;
 
-		if (!BuildConfig.DEBUG) {
-			// Production Stuff
-			onCreateInProductionMode();
-		} else {
+		if (BuildConfig.DEBUG) {
 			// Debug Stuff
 			onCreateDebugMode();
+		}
+
+		if ("release".equals(BuildConfig.BUILD_NAME) ||  "staging".equals(BuildConfig.BUILD_NAME)) {
+			// Production Stuff
+			onCreateInProductionMode();
 		}
 
 		JodaTimeAndroid.init(this);
