@@ -6,22 +6,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
 import io.explod.android.emptyshell.R;
+
+import static io.explod.android.emptyshell.App.getApp;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends FullFragment {
+public class MainFragment extends FullFragment {
+
+	@NonNull
+	public static FullFragment newInstance() {
+		return new MainFragment();
+	}
 
 	TitleFragmentState mFragmentState = new TitleFragmentState(null, R.string.app_name, 0);
 
-	public MainActivityFragment() {
+	public MainFragment() {
+		getApp().getObjectGraph().inject(this);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_main, container, false);
+		View view = inflater.inflate(R.layout.fragment_main, container, false);
+		ButterKnife.bind(this, view);
+		return view;
 	}
 
 	@NonNull
@@ -29,4 +40,5 @@ public class MainActivityFragment extends FullFragment {
 	public FragmentState getFragmentState() {
 		return mFragmentState;
 	}
+
 }
