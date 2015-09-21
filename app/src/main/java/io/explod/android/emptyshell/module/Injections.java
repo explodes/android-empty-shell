@@ -1,6 +1,7 @@
 package io.explod.android.emptyshell.module;
 
 import io.explod.android.emptyshell.ui.activity.MainActivity;
+import io.explod.android.emptyshell.ui.fragment.MainFragment;
 import io.explod.android.emptyshell.ui.widget.typeface.CustomTypefaceSpan;
 import io.explod.android.emptyshell.ui.widget.typeface.TypefaceButton;
 import io.explod.android.emptyshell.ui.widget.typeface.TypefaceEditText;
@@ -18,4 +19,5 @@ public interface Injections {
 
 	void inject(MainActivity target);
 
+	void inject(MainFragment target);
 }
