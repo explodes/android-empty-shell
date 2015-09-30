@@ -1,7 +1,13 @@
 package io.explod.android.emptyshell;
 
 import android.app.Application;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
@@ -16,9 +22,33 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application {
 
+	// statics
+
+	public static void logException(Throwable error) {
+		logException(TAG, "An exception has occurred", error);
+	}
+
+	public static void logException(String tag, String message, Throwable error) {
+		Log.e(tag, message, error);
+		if (!BuildConfig.DEBUG) {
+			Crashlytics.logException(error);
+		}
+	}
+
+	public static void showException(@Nullable Context context, String tag, String errorMessage, @StringRes int userMessage, Throwable error) {
+		logException(tag, errorMessage, error);
+		if (context != null) {
+			sMainHandler.post(() -> Toast.makeText(context, userMessage, Toast.LENGTH_SHORT).show());
+		}
+	}
+
 	private static final String TAG = App.class.getSimpleName();
 
 	private static App sInstance;
+
+	private static Handler sMainHandler = new Handler(Looper.getMainLooper());
+
+	// instance
 
 	private ObjectGraph mObjectGraph = DaggerObjectGraph.builder()
 		.appModule(new AppModule(this))
@@ -78,13 +108,6 @@ public class App extends Application {
 //				.penaltyLog()
 //				.penaltyDeath()
 //				.build());
-	}
-
-	public static void logException(Throwable error) {
-		Log.e(TAG, "An exception has occurred", error);
-		if (!BuildConfig.DEBUG) {
-			Crashlytics.logException(error);
-		}
 	}
 
 }

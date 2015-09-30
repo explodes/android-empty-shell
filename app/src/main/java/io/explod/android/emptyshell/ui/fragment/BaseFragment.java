@@ -1,6 +1,5 @@
 package io.explod.android.emptyshell.ui.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -34,50 +33,58 @@ public abstract class BaseFragment extends RxFragment implements HasDialogs, Has
 	}
 
 	@Override
-	public void showAlertDialog(@StringRes int messageResId) {
-		Activity activity = getActivity();
-		if (activity != null) {
-			showAlertDialog(activity.getResources().getText(messageResId));
-		}
-	}
-
-	@Override
-	public void showAlertDialog(CharSequence message) {
+	public void showAlertDialog(@StringRes int titleResId, @StringRes int messageResId) {
 		hideDialogs();
-		if (mAlertDialog == null) {
-			Context context = getActivity();
-			if (context == null) {
-				return;
-			}
-			mAlertDialog = new AlertDialog.Builder(context)
-				.setPositiveButton(android.R.string.ok, null)
-				.create();
-
+		Context context = getContext();
+		if (context == null) {
+			return;
 		}
-		mAlertDialog.setMessage(message);
+		mAlertDialog = new AlertDialog.Builder(context)
+			.setPositiveButton(android.R.string.ok, null)
+			.setTitle(titleResId)
+			.setMessage(messageResId)
+			.create();
 		mAlertDialog.show();
 	}
 
 	@Override
-	public void showProgressDialog(@StringRes int messageResId) {
-		Activity activity = getActivity();
-		if (activity != null) {
-			showProgressDialog(activity.getResources().getText(messageResId));
+	public void showAlertDialog(@StringRes int messageResId) {
+		hideDialogs();
+		Context context = getContext();
+		if (context == null) {
+			return;
 		}
+		mAlertDialog = new AlertDialog.Builder(context)
+			.setPositiveButton(android.R.string.ok, null)
+			.setMessage(messageResId)
+			.create();
+		mAlertDialog.show();
 	}
 
 	@Override
-	public void showProgressDialog(CharSequence message) {
+	public void showProgressDialog(@StringRes int titleResId, @StringRes int messageResId) {
 		hideDialogs();
-		if (mProgressDialog == null) {
-			Context context = getActivity();
-			if (context == null) {
-				return;
-			}
-			mProgressDialog = new ProgressDialog(context);
-			mProgressDialog.setCancelable(false);
+		Context context = getContext();
+		if (context == null) {
+			return;
 		}
-		mProgressDialog.setMessage(message);
+		mProgressDialog = new ProgressDialog(context);
+		mProgressDialog.setCancelable(false);
+		mProgressDialog.setTitle(titleResId);
+		mProgressDialog.setMessage(context.getText(messageResId));
+		mProgressDialog.show();
+	}
+
+	@Override
+	public void showProgressDialog(@StringRes int messageResId) {
+		hideDialogs();
+		Context context = getContext();
+		if (context == null) {
+			return;
+		}
+		mProgressDialog = new ProgressDialog(context);
+		mProgressDialog.setCancelable(false);
+		mProgressDialog.setMessage(context.getText(messageResId));
 		mProgressDialog.show();
 	}
 
@@ -86,9 +93,11 @@ public abstract class BaseFragment extends RxFragment implements HasDialogs, Has
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 		}
+		mProgressDialog = null;
 		if (mAlertDialog != null && mAlertDialog.isShowing()) {
 			mAlertDialog.dismiss();
 		}
+		mAlertDialog = null;
 	}
 
 	@Override

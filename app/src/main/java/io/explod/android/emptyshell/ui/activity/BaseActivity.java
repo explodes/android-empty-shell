@@ -114,34 +114,44 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 
 	@Override
 	public void showAlertDialog(@StringRes int messageResId) {
-		showAlertDialog(getResources().getText(messageResId));
-	}
-
-	@Override
-	public void showAlertDialog(CharSequence message) {
 		hideDialogs();
-		if (mAlertDialog == null) {
-			mAlertDialog = new AlertDialog.Builder(this).setPositiveButton(android.R.string.ok, null).create();
-		}
-		mAlertDialog.setMessage(message);
+		mAlertDialog = new AlertDialog.Builder(this)
+			.setPositiveButton(android.R.string.ok, null)
+			.setMessage(messageResId)
+			.create();
 		mAlertDialog.show();
 	}
 
 	@Override
-	public void showProgressDialog(@StringRes int messageResId) {
-		showProgressDialog(getResources().getText(messageResId));
+	public void showAlertDialog(@StringRes int titleResId, @StringRes int messageResId) {
+		hideDialogs();
+		mAlertDialog = new AlertDialog.Builder(this)
+			.setPositiveButton(android.R.string.ok, null)
+			.setTitle(titleResId)
+			.setMessage(messageResId)
+			.create();
+		mAlertDialog.show();
 	}
 
 	@Override
-	public void showProgressDialog(CharSequence message) {
+	public void showProgressDialog(@StringRes int titleResId, @StringRes int messageResId) {
 		hideDialogs();
-		if (mProgressDialog == null) {
-			mProgressDialog = new ProgressDialog(this);
-			mProgressDialog.setCancelable(false);
-		}
-		mProgressDialog.setMessage(message);
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setCancelable(false);
+		mProgressDialog.setTitle(titleResId);
+		mProgressDialog.setMessage(getText(messageResId));
 		mProgressDialog.show();
 	}
+
+	@Override
+	public void showProgressDialog(@StringRes int messageResId) {
+		hideDialogs();
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setCancelable(false);
+		mProgressDialog.setMessage(getText(messageResId));
+		mProgressDialog.show();
+	}
+
 
 	/**
 	 * Show an "Unexpected Error" alert and log the exception.
@@ -149,8 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 	 * @param error Exception to log
 	 */
 	public void showUnexpectedErrorDialog(Throwable error) {
-		Log.e(TAG, "unexpected error", error);
-		logException(error);
+		logException(TAG, "unexcpected error", error);
 		showUnexpectedErrorDialog();
 	}
 
@@ -163,9 +172,11 @@ public abstract class BaseActivity extends AppCompatActivity implements HasDialo
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 		}
+		mProgressDialog = null;
 		if (mAlertDialog != null && mAlertDialog.isShowing()) {
 			mAlertDialog.dismiss();
 		}
+		mAlertDialog = null;
 	}
 
 	@Override
