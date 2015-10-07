@@ -89,7 +89,8 @@ public class NetworkModule {
 //						String authorization = Constants.HTTP_HEADER_AUTHORIZATION_BEARER + " " + token.accessToken;
 //						requestBuilder.header(Constants.HTTP_HEADER_AUTHORIZATION, authorization);
 //					}
-					Request request = requestBuilder.header(Constants.HTTP_HEADER_USER_AGENT, userAgent)
+					Request request = requestBuilder
+						.header(Constants.HTTP_HEADER_USER_AGENT, userAgent)
 						.header(Constants.HTTP_HEADER_ACCEPT, Constants.HTTP_MIME_JSON)
 						.header(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON)
 						.header(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP)
