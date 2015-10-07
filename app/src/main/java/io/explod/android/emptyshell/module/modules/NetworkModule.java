@@ -56,6 +56,7 @@ public class NetworkModule {
 						.header(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON)
 						.header(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP)
 						.header(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8)
+						.method(original.method(), original.body())
 						.build();
 					return chain.proceed(request);
 				};
@@ -93,6 +94,7 @@ public class NetworkModule {
 						.header(Constants.HTTP_HEADER_CONTENT_TYPE, Constants.HTTP_MIME_JSON)
 						.header(Constants.HTTP_HEADER_ACCEPT_ENCODING, Constants.HTTP_ACCEPT_ENCODING_GZIP)
 						.header(Constants.HTTP_HEADER_ACCEPT_CHARSET, Constants.HTTP_ACCEPT_CHARSET_UTF8)
+						.method(original.method(), original.body())
 						.build();
 
 					return chain.proceed(request);
