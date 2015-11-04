@@ -1,9 +1,9 @@
-package com.pluralsight.android.learner.ui.widget.recycler;
+package io.explod.android.emptyshell.ui.widget.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.pluralsight.android.learner.R;
+import io.explod.android.emptyshell.R;
 
 public class ItemClickSupport {
 	private final RecyclerView mRecyclerView;
