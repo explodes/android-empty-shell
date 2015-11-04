@@ -1,9 +1,9 @@
-package io.explod.android.emptyshell.ui.widget.recycler;
+package com.pluralsight.android.learner.ui.widget.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import io.explod.android.emptyshell.R;
+import com.pluralsight.android.learner.R;
 
 public class ItemClickSupport {
 	private final RecyclerView mRecyclerView;
@@ -14,7 +14,10 @@ public class ItemClickSupport {
 		public void onClick(View v) {
 			if (mOnItemClickListener != null) {
 				RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(v);
-				mOnItemClickListener.onItemClicked(mRecyclerView, holder.getAdapterPosition(), v);
+				int position = holder.getAdapterPosition();
+				if (position != RecyclerView.NO_POSITION) {
+					mOnItemClickListener.onItemClicked(mRecyclerView, position, v);
+				}
 			}
 		}
 	};
@@ -23,13 +26,15 @@ public class ItemClickSupport {
 		public boolean onLongClick(View v) {
 			if (mOnItemLongClickListener != null) {
 				RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(v);
-				return mOnItemLongClickListener.onItemLongClicked(mRecyclerView, holder.getAdapterPosition(), v);
+				int position = holder.getAdapterPosition();
+				if (position != RecyclerView.NO_POSITION) {
+					return mOnItemLongClickListener.onItemLongClicked(mRecyclerView, position, v);
+				}
 			}
 			return false;
 		}
 	};
-	private RecyclerView.OnChildAttachStateChangeListener mAttachListener
-		= new RecyclerView.OnChildAttachStateChangeListener() {
+	private RecyclerView.OnChildAttachStateChangeListener mAttachListener = new RecyclerView.OnChildAttachStateChangeListener() {
 		@Override
 		public void onChildViewAttachedToWindow(View view) {
 			if (mOnItemClickListener != null) {
